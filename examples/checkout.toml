@@ -1,0 +1,53 @@
+# A typical checkout path where every team added "a few retries" on its own.
+[defaults]
+max_amplification = 10
+
+[services.edge]
+entry = true
+deadline_ms = 3000
+rps = 500
+
+[services.checkout]
+deadline_ms = 2500
+
+[services.payments]
+deadline_ms = 2000
+capacity_rps = 4000
+
+[services.inventory]
+deadline_ms = 800
+
+[services.ledger-db]
+deadline_ms = 500
+capacity_rps = 6000
+
+[[calls]]
+from = "edge"
+to = "checkout"
+attempts = 3
+per_try_timeout_ms = 1000
+backoff_ms = 100
+jitter = true
+
+[[calls]]
+from = "checkout"
+to = "payments"
+attempts = 3
+per_try_timeout_ms = 1500
+backoff_ms = 0
+idempotent = false
+
+[[calls]]
+from = "checkout"
+to = "inventory"
+attempts = 2
+per_try_timeout_ms = 400
+backoff_ms = 50
+
+[[calls]]
+from = "payments"
+to = "ledger-db"
+attempts = 4
+per_try_timeout_ms = 300
+backoff_ms = 20
+jitter = true

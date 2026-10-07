@@ -1,0 +1,50 @@
+# Same graph, retries moved to one layer with backoff, jitter, and fitted timeouts.
+[defaults]
+max_amplification = 10
+
+[services.edge]
+entry = true
+deadline_ms = 3000
+rps = 500
+
+[services.checkout]
+deadline_ms = 2500
+
+[services.payments]
+deadline_ms = 1200
+capacity_rps = 4000
+
+[services.inventory]
+deadline_ms = 300
+
+[services.ledger-db]
+deadline_ms = 250
+capacity_rps = 6000
+
+[[calls]]
+from = "edge"
+to = "checkout"
+attempts = 1
+per_try_timeout_ms = 2600
+
+[[calls]]
+from = "checkout"
+to = "payments"
+attempts = 1
+per_try_timeout_ms = 1300
+
+[[calls]]
+from = "checkout"
+to = "inventory"
+attempts = 3
+per_try_timeout_ms = 350
+backoff_ms = 50
+jitter = true
+
+[[calls]]
+from = "payments"
+to = "ledger-db"
+attempts = 3
+per_try_timeout_ms = 300
+backoff_ms = 20
+jitter = true

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retryamp"
+version = "0.1.0"
+description = "Static retry-amplification and timeout-budget auditor for service call graphs"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [{name = "Md Rashedul Hasan"}]
+dependencies = []
+
+[project.scripts]
+retryamp = "retryamp.cli:main"
+
+[tool.setuptools]
+packages = ["retryamp"]
